@@ -15,8 +15,62 @@
     <atom:link href="http://hangchuanin.github.io/rss2.xml" rel="self" type="application/rss+xml"/>
     
     <description></description>
-    <pubDate>Wed, 14 Dec 2022 08:38:54 GMT</pubDate>
+    <pubDate>Fri, 23 Dec 2022 12:29:04 GMT</pubDate>
     <generator>http://hexo.io/</generator>
+    
+    <item>
+      <title>内网渗透从零到一之管道</title>
+      <link>http://hangchuanin.github.io/2022/12/20/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F%E4%BB%8E%E9%9B%B6%E5%88%B0%E4%B8%80%E4%B9%8B%E7%AE%A1%E9%81%93/</link>
+      <guid>http://hangchuanin.github.io/2022/12/20/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F%E4%BB%8E%E9%9B%B6%E5%88%B0%E4%B8%80%E4%B9%8B%E7%AE%A1%E9%81%93/</guid>
+      <pubDate>Tue, 20 Dec 2022 10:50:00 GMT</pubDate>
+      
+        
+        
+          
+          
+      <description>&lt;h2 id=&quot;0x00&quot;&gt;&lt;a href=&quot;#0x00&quot; class=&quot;headerlink&quot; title=&quot;0x00&quot;&gt;&lt;/a&gt;0x00&lt;/h2&gt;&lt;p&gt;内网渗透中很多工具的原理都用到了管道，所以系统学习一下管道并记录&lt;/p&gt;
+&lt;h2 id=&quot;0x01-匿名管道&quot;&gt;&lt;a</description>
+          
+        
+      
+      
+      
+      
+      <category domain="http://hangchuanin.github.io/categories/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/">内网渗透</category>
+      
+      
+      
+      <comments>http://hangchuanin.github.io/2022/12/20/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F%E4%BB%8E%E9%9B%B6%E5%88%B0%E4%B8%80%E4%B9%8B%E7%AE%A1%E9%81%93/#disqus_thread</comments>
+      
+    </item>
+    
+    <item>
+      <title>内网渗透从零到一之SMB协议</title>
+      <link>http://hangchuanin.github.io/2022/12/19/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F%E4%BB%8E%E9%9B%B6%E5%88%B0%E4%B8%80%E4%B9%8BSMB%E5%8D%8F%E8%AE%AE/</link>
+      <guid>http://hangchuanin.github.io/2022/12/19/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F%E4%BB%8E%E9%9B%B6%E5%88%B0%E4%B8%80%E4%B9%8BSMB%E5%8D%8F%E8%AE%AE/</guid>
+      <pubDate>Mon, 19 Dec 2022 10:50:00 GMT</pubDate>
+      
+        
+        
+          
+          
+      <description>&lt;blockquote&gt;
+&lt;p&gt;本文首发于&lt;a href=&quot;https://xz.aliyun.com/t/11971&quot;&gt;先知社区&lt;/a&gt;，转载请联系站方。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2 id=&quot;0x00&quot;&gt;&lt;a href=&quot;#0x00&quot;</description>
+          
+        
+      
+      
+      
+      
+      <category domain="http://hangchuanin.github.io/categories/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/">内网渗透</category>
+      
+      
+      
+      <comments>http://hangchuanin.github.io/2022/12/19/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F%E4%BB%8E%E9%9B%B6%E5%88%B0%E4%B8%80%E4%B9%8BSMB%E5%8D%8F%E8%AE%AE/#disqus_thread</comments>
+      
+    </item>
     
     <item>
       <title>一个菜鸟的免杀之路（一）</title>
