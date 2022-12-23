@@ -13,26 +13,26 @@
 <meta property="og:site_name" content="hangchuanin&#39;s blog">
 <meta property="og:description" content="本文首发于先知社区，转载请联系站方。  0x00在内网利用PTH进行横向移动时常使用的atexec&#x2F;smbexec&#x2F;psexec等都有smb协议的身影，而笔者对smb协议理解的也比较粗浅，所以对smb协议进行一个系统的学习，并作个记录。 0x01 SMBv1CIFS协议是SMB协议的一个特定版本的特定叫法，本质还是SMB协议。其它的SMB协议版本对应有其它的叫法，这个叫法也可">
 <meta property="og:locale" content="en_US">
-<meta property="og:image" content="https://gitee.com/hangchuanin/blog_image/raw/master/images/Intranet_penetration/smb/image-20221219150807594.png">
-<meta property="og:image" content="https://gitee.com/hangchuanin/blog_image/raw/master/images/Intranet_penetration/smb/image-20221219152222936.png">
-<meta property="og:image" content="https://gitee.com/hangchuanin/blog_image/raw/master/images/Intranet_penetration/smb/image-20221219191209164.png">
-<meta property="og:image" content="https://gitee.com/hangchuanin/blog_image/raw/master/images/Intranet_penetration/smb/image-20221219191240062.png">
-<meta property="og:image" content="https://gitee.com/hangchuanin/blog_image/raw/master/images/Intranet_penetration/smb/image-20221219172948684.png">
-<meta property="og:image" content="https://gitee.com/hangchuanin/blog_image/raw/master/images/Intranet_penetration/smb/image-20221219174814386.png">
-<meta property="og:image" content="https://gitee.com/hangchuanin/blog_image/raw/master/images/Intranet_penetration/smb/image-20221219175100465.png">
-<meta property="og:image" content="https://gitee.com/hangchuanin/blog_image/raw/master/images/Intranet_penetration/smb/image-20221219160054250.png">
-<meta property="og:image" content="https://gitee.com/hangchuanin/blog_image/raw/master/images/Intranet_penetration/smb/image-20221219161732028.png">
-<meta property="og:image" content="https://gitee.com/hangchuanin/blog_image/raw/master/images/Intranet_penetration/smb/image-20221219180644579.png">
-<meta property="og:image" content="https://gitee.com/hangchuanin/blog_image/raw/master/images/Intranet_penetration/smb/image-20221219190230353.png">
-<meta property="og:image" content="https://gitee.com/hangchuanin/blog_image/raw/master/images/Intranet_penetration/smb/image-20221219190250764.png">
-<meta property="og:image" content="https://gitee.com/hangchuanin/blog_image/raw/master/images/Intranet_penetration/smb/image-20221219165558603.png">
-<meta property="og:image" content="https://gitee.com/hangchuanin/blog_image/raw/master/images/Intranet_penetration/smb/image-20221219193215856.png">
-<meta property="og:image" content="https://gitee.com/hangchuanin/blog_image/raw/master/images/Intranet_penetration/smb/image-20221219193414120.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/hangchuanin/hangchuanin.github.io/images/images/Intranet_penetration/smb/image-20221219150807594.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/hangchuanin/hangchuanin.github.io/images/images/Intranet_penetration/smb/image-20221219152222936.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/hangchuanin/hangchuanin.github.io/images/images/Intranet_penetration/smb/image-20221219191209164.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/hangchuanin/hangchuanin.github.io/images/images/Intranet_penetration/smb/image-20221219191240062.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/hangchuanin/hangchuanin.github.io/images/images/Intranet_penetration/smb/image-20221219172948684.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/hangchuanin/hangchuanin.github.io/images/images/Intranet_penetration/smb/image-20221219174814386.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/hangchuanin/hangchuanin.github.io/images/images/Intranet_penetration/smb/image-20221219175100465.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/hangchuanin/hangchuanin.github.io/images/images/Intranet_penetration/smb/image-20221219160054250.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/hangchuanin/hangchuanin.github.io/images/images/Intranet_penetration/smb/image-20221219161732028.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/hangchuanin/hangchuanin.github.io/images/images/Intranet_penetration/smb/image-20221219180644579.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/hangchuanin/hangchuanin.github.io/images/images/Intranet_penetration/smb/image-20221219190230353.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/hangchuanin/hangchuanin.github.io/images/images/Intranet_penetration/smb/image-20221219190250764.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/hangchuanin/hangchuanin.github.io/images/images/Intranet_penetration/smb/image-20221219165558603.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/hangchuanin/hangchuanin.github.io/images/images/Intranet_penetration/smb/image-20221219193215856.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/hangchuanin/hangchuanin.github.io/images/images/Intranet_penetration/smb/image-20221219193414120.png">
 <meta property="article:published_time" content="2022-12-19T10:50:00.000Z">
-<meta property="article:modified_time" content="2022-12-23T12:30:11.076Z">
+<meta property="article:modified_time" content="2022-12-23T13:04:48.501Z">
 <meta property="article:author" content="hangchuanin">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://gitee.com/hangchuanin/blog_image/raw/master/images/Intranet_penetration/smb/image-20221219150807594.png">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/hangchuanin/hangchuanin.github.io/images/images/Intranet_penetration/smb/image-20221219150807594.png">
     
     
       
@@ -194,7 +194,7 @@
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">SMB_Header&#123;</span><br><span class="line">    UCHAR  Protocol[<span class="number">4</span>];</span><br><span class="line">    UCHAR  Command;</span><br><span class="line">    SMB_ERROR Status;</span><br><span class="line">    UCHAR  Flags;</span><br><span class="line">    USHORT Flags2;</span><br><span class="line">    USHORT PIDHigh;</span><br><span class="line">    UCHAR  SecurityFeatures[<span class="number">8</span>];</span><br><span class="line">    USHORT Reserved;</span><br><span class="line">    USHORT TID;</span><br><span class="line">    USHORT PIDLow;</span><br><span class="line">    USHORT UID;</span><br><span class="line">    USHORT MID;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>Command位用于表示发送的是什么命令，用命令对应的命令代码表示，比如我要发送SMB_COM_CREATE_DIRECTORY命令，则填充Command位为0x00，SMB_COM_CREATE_DIRECTORY命令的意思是创建一个新目录。其它命令可查看<a target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/openspecs/windows_protocols/ms-cifs/32b5d4b7-d90b-483f-ad6a-003fd110f0ec">文档</a></p>
-<p><img src="https://gitee.com/hangchuanin/blog_image/raw/master/images/Intranet_penetration/smb/image-20221219150807594.png" alt="image-20221219150807594"></p>
+<p><img src="https://raw.githubusercontent.com/hangchuanin/hangchuanin.github.io/images/images/Intranet_penetration/smb/image-20221219150807594.png" alt="image-20221219150807594"></p>
 <p>SMB_Header结构的其它位的含义可以查看<a target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/openspecs/windows_protocols/ms-cifs/69a29f73-de0c-45a6-a1aa-8ceeea42217f">文档</a></p>
 <h4 id="0x0101-SMB-Parameters"><a href="#0x0101-SMB-Parameters" class="headerlink" title="0x0101 SMB_Parameters"></a>0x0101 SMB_Parameters</h4><p>SMB_Parameters结构如下</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">SMB_Parameters&#123;</span><br><span class="line">    UCHAR  WordCount;</span><br><span class="line">    USHORT Words[WordCount] (variable);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -214,15 +214,15 @@
 <p>大概分析一下以下两条cmd命令的SMBv1消息，重点看Command字段值</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">net use \\10.1.1.1\ipc$ &quot;administrator&quot; /user:&quot;administrator&quot;</span><br><span class="line">dir \\10.1.1.1\c$</span><br></pre></td></tr></table></figure>
 
-<p><img src="https://gitee.com/hangchuanin/blog_image/raw/master/images/Intranet_penetration/smb/image-20221219152222936.png" alt="image-20221219152222936"></p>
+<p><img src="https://raw.githubusercontent.com/hangchuanin/hangchuanin.github.io/images/images/Intranet_penetration/smb/image-20221219152222936.png" alt="image-20221219152222936"></p>
 <p>Command字段值按顺序汇总为如下</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">SMB_COM_NEGOTIATE</span><br><span class="line">SMB_COM_SESSION_SETUP_ANDX</span><br><span class="line">SMB_COM_SESSION_SETUP_ANDX</span><br><span class="line">SMB_COM_TREE_CONNECT_ANDX</span><br><span class="line">SMB_COM_TREE_CONNECT_ANDX</span><br><span class="line">SMB_COM_TRANSACTION2</span><br><span class="line">SMB_COM_TRANSACTION2</span><br><span class="line">SMB_COM_TRANSACTION2</span><br><span class="line">SMB_COM_TRANSACTION2</span><br><span class="line">SMB_COM_TRANSACTION2</span><br><span class="line">SMB_COM_TRANSACTION2</span><br></pre></td></tr></table></figure>
 
 <p>SMB_COM_NEGOTIATE命令用于协商协议方言。</p>
 <p>SMB_COM_SESSION_SETUP_ANDX命令用于配置SMB 会话。如果服务器在用户级访问控制模式下运行，则必须发送至少一个 SMB_COM_SESSION_SETUP_ANDX以执行用户登录到服务器并建立有效的 UID。通过抓包我们也可以看到SMB_COM_SESSION_SETUP_ANDX命令用来进行NTLM身份认证。</p>
-<p><img src="https://gitee.com/hangchuanin/blog_image/raw/master/images/Intranet_penetration/smb/image-20221219191209164.png" alt="image-20221219191209164"></p>
+<p><img src="https://raw.githubusercontent.com/hangchuanin/hangchuanin.github.io/images/images/Intranet_penetration/smb/image-20221219191209164.png" alt="image-20221219191209164"></p>
 <p>SMB_COM_TREE_CONNECT_ANDX命令用于建立到服务器共享的客户端连接。这里是先建立到<code>\\10.1.1.1\ipc$</code>共享的客户端连接，然后在dir的时候建立到<code>c$</code>的共享</p>
-<p><img src="https://gitee.com/hangchuanin/blog_image/raw/master/images/Intranet_penetration/smb/image-20221219191240062.png" alt="image-20221219191240062"></p>
+<p><img src="https://raw.githubusercontent.com/hangchuanin/hangchuanin.github.io/images/images/Intranet_penetration/smb/image-20221219191240062.png" alt="image-20221219191240062"></p>
 <p>SMB_COM_TRANSACTION2命令请求消息结构如下</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">SMB_Parameters</span><br><span class="line">  &#123;</span><br><span class="line">  UCHAR  WordCount;</span><br><span class="line">  Words</span><br><span class="line">    &#123;</span><br><span class="line">    USHORT TotalParameterCount;</span><br><span class="line">    USHORT TotalDataCount;</span><br><span class="line">    USHORT MaxParameterCount;</span><br><span class="line">    USHORT MaxDataCount;</span><br><span class="line">    UCHAR  MaxSetupCount;</span><br><span class="line">    UCHAR  Reserved1;</span><br><span class="line">    USHORT Flags;</span><br><span class="line">    ULONG  Timeout;</span><br><span class="line">    USHORT Reserved2;</span><br><span class="line">    USHORT ParameterCount;</span><br><span class="line">    USHORT ParameterOffset;</span><br><span class="line">    USHORT DataCount;</span><br><span class="line">    USHORT DataOffset;</span><br><span class="line">    UCHAR  SetupCount;</span><br><span class="line">    UCHAR  Reserved3;</span><br><span class="line">    USHORT Setup[SetupCount];</span><br><span class="line">    &#125;</span><br><span class="line">  &#125; </span><br><span class="line">SMB_Data</span><br><span class="line">  &#123;</span><br><span class="line">  USHORT ByteCount;</span><br><span class="line">  Bytes</span><br><span class="line">    &#123;</span><br><span class="line">    UCHAR Name;</span><br><span class="line">    UCHAR Pad1[];</span><br><span class="line">    UCHAR Trans2_Parameters[ParameterCount];</span><br><span class="line">    UCHAR Pad2[];</span><br><span class="line">    UCHAR Trans2_Data[DataCount];</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
 
@@ -231,44 +231,44 @@
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">TRANS2_QUERY_PATH_INFORMATION</span><br><span class="line">TRANS2_QUERY_PATH_INFORMATION</span><br><span class="line">TRANS2_QUERY_FS_INFORMATION</span><br><span class="line">TRANS2_QUERY_FS_INFORMATION</span><br><span class="line">TRANS2_FIND_FIRST2</span><br><span class="line">TRANS2_QUERY_FS_INFORMATION</span><br></pre></td></tr></table></figure>
 
 <p>TRANS2_QUERY_PATH_INFORMATION子命令用于获取文件或目录的信息。TRANS2_QUERY_PATH_INFORMATION请求消息中的Trans2_Parameters.InformationLevel的值为<code>QUERY Information Level Codes</code>，<code>QUERY Information Level Codes</code>决定了响应消息中包含的哪些信息，<code>QUERY Information Level Codes</code>有如下值</p>
-<p><img src="https://gitee.com/hangchuanin/blog_image/raw/master/images/Intranet_penetration/smb/image-20221219172948684.png" alt="image-20221219172948684"></p>
+<p><img src="https://raw.githubusercontent.com/hangchuanin/hangchuanin.github.io/images/images/Intranet_penetration/smb/image-20221219172948684.png" alt="image-20221219172948684"></p>
 <p>TRANS2_QUERY_FS_INFORMATION子命令用于请求有关作为服务器上共享基础的对象存储的信息。TRANS2_QUERY_FS_INFORMATION子命令请求消息也有Trans2_Parameters.InformationLevel字段，该字段值为<code>QUERY_FS Information Level Codes</code>，<code>QUERY_FS Information Level Codes</code>不同返回的内容不同，有如下</p>
-<p><img src="https://gitee.com/hangchuanin/blog_image/raw/master/images/Intranet_penetration/smb/image-20221219174814386.png" alt="image-20221219174814386"></p>
+<p><img src="https://raw.githubusercontent.com/hangchuanin/hangchuanin.github.io/images/images/Intranet_penetration/smb/image-20221219174814386.png" alt="image-20221219174814386"></p>
 <p>TRANS2_FIND_FIRST2子命令用于搜索目录中的文件或目录。Trans2_Parameters.InformationLevel字段值为<code>FIND Information Level Codes</code>，<code>FIND Information Level Codes</code>不同返回的内容不同，有如下</p>
-<p><img src="https://gitee.com/hangchuanin/blog_image/raw/master/images/Intranet_penetration/smb/image-20221219175100465.png" alt="image-20221219175100465"></p>
+<p><img src="https://raw.githubusercontent.com/hangchuanin/hangchuanin.github.io/images/images/Intranet_penetration/smb/image-20221219175100465.png" alt="image-20221219175100465"></p>
 <p>其它SMB_COM_TRANSACTION2命令的子命令可以查看<a target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/openspecs/windows_protocols/ms-cifs/1cc40e02-aaea-4f33-b7b7-3a6b63906516">文档</a></p>
 <p>每条命令的细节可以去查文档，文档里面的有命令的作用和对应的消息结构。</p>
 <h2 id="0x02-SMBv2"><a href="#0x02-SMBv2" class="headerlink" title="0x02 SMBv2"></a>0x02 SMBv2</h2><p>SMBv2是对SMBv1的一个扩展，当SMBv2标头设置了Flags中的SMB2_FLAGS_ASYNC_COMMAND位时，SMBv2标头结构为<a target="_blank" rel="noopener" href="https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-smb2/ea4560b7-90da-4803-82b5-344754b92a79">ASYNC</a>，当SMBv2标头没有设置Flags中的SMB2_FLAGS_ASYNC_COMMAND位时，SMBv2标头结构为<a target="_blank" rel="noopener" href="https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-smb2/fb188936-5050-48d3-b350-dc43059638a4">SYNC</a></p>
 <p>SMBv2标头结构在SMBv2的所有消息中是固定的，而消息剩余部分的内容随命令不同而不同，SMBv2命令填充到SMBv2标头的Command字段中，SMBv2命令有如下</p>
-<p><img src="https://gitee.com/hangchuanin/blog_image/raw/master/images/Intranet_penetration/smb/image-20221219160054250.png" alt="image-20221219160054250"></p>
+<p><img src="https://raw.githubusercontent.com/hangchuanin/hangchuanin.github.io/images/images/Intranet_penetration/smb/image-20221219160054250.png" alt="image-20221219160054250"></p>
 <p>使用如下powershell命令开启SMBv2&#x2F;SMBv3，命令执行完之后需要重启计算机</p>
 <figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">Set-ItemProperty</span> <span class="literal">-Path</span> <span class="string">&quot;HKLM:\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters&quot;</span> SMB2 <span class="literal">-Type</span> DWORD <span class="literal">-Value</span> <span class="number">1</span> <span class="literal">-Force</span></span><br></pre></td></tr></table></figure>
 
 <p>大概分析一下以下两条命令的SMBv2消息</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">net use \\10.1.1.1\ipc$ &quot;123.com&quot; /user:&quot;administrator&quot;</span><br><span class="line">dir \\10.1.1.1\c$</span><br></pre></td></tr></table></figure>
 
-<p><img src="https://gitee.com/hangchuanin/blog_image/raw/master/images/Intranet_penetration/smb/image-20221219161732028.png" alt="image-20221219161732028"></p>
+<p><img src="https://raw.githubusercontent.com/hangchuanin/hangchuanin.github.io/images/images/Intranet_penetration/smb/image-20221219161732028.png" alt="image-20221219161732028"></p>
 <p>Command字段值按顺序汇总为如下</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">SMB_COM_NEGOTIATE</span><br><span class="line">SMB2 NEGOTIATE</span><br><span class="line">SMB2 SESSION_SETUP</span><br><span class="line">SMB2 SESSION_SETUP</span><br><span class="line">SMB2 TREE_CONNECT</span><br><span class="line">SMB2 IOCTL</span><br><span class="line">SMB2 IOCTL</span><br><span class="line">SMB2 TREE_CONNECT</span><br><span class="line">SMB2 IOCTL</span><br><span class="line">SMB2 CREATE</span><br><span class="line">SMB2 QUERY_INFO</span><br><span class="line">SMB2 CREATE</span><br><span class="line">SMB2 CLOSE</span><br><span class="line">SMB2 CREATE</span><br><span class="line">SMB2 CLOSE</span><br><span class="line">SMB2 QUERY_INFO</span><br></pre></td></tr></table></figure>
 
 <p>SMB_COM_NEGOTIATE是SMBv1中的命令，是用来协商方言的。</p>
 <p>SMB2 NEGOTIATE是SMBv2中的命令，也是用来协商方言的。这里可以看下返回包，服务器选择了SMB2.1方言</p>
-<p><img src="https://gitee.com/hangchuanin/blog_image/raw/master/images/Intranet_penetration/smb/image-20221219180644579.png" alt="image-20221219180644579"></p>
+<p><img src="https://raw.githubusercontent.com/hangchuanin/hangchuanin.github.io/images/images/Intranet_penetration/smb/image-20221219180644579.png" alt="image-20221219180644579"></p>
 <p>SMB2 SESSION_SETUP命令用以请求新的经过身份验证的会话到服务器。这里就是使用NTLM协议进行身份认证。</p>
-<p><img src="https://gitee.com/hangchuanin/blog_image/raw/master/images/Intranet_penetration/smb/image-20221219190230353.png" alt="image-20221219190230353"></p>
+<p><img src="https://raw.githubusercontent.com/hangchuanin/hangchuanin.github.io/images/images/Intranet_penetration/smb/image-20221219190230353.png" alt="image-20221219190230353"></p>
 <p>SMB2 TREE_CONNECT命令用来请求服务器上的特定共享。这里连接的是ipc$</p>
-<p><img src="https://gitee.com/hangchuanin/blog_image/raw/master/images/Intranet_penetration/smb/image-20221219190250764.png" alt="image-20221219190250764"></p>
+<p><img src="https://raw.githubusercontent.com/hangchuanin/hangchuanin.github.io/images/images/Intranet_penetration/smb/image-20221219190250764.png" alt="image-20221219190250764"></p>
 <p>SMB2 IOCTL用来发送文件系统控制命令或设备控制命令。</p>
 <p>SMB2 CREATE用以请求创建或访问文件。</p>
 <p>SMB2 QUERY_INFO用来查询文件、命名管道或基础卷的信息。</p>
 <p>SMB2 CLOSE用于关闭SMB2 CREATE命令打开的文件实例。</p>
 <h2 id="0x03-SMBv3"><a href="#0x03-SMBv3" class="headerlink" title="0x03 SMBv3"></a>0x03 SMBv3</h2><p>SMBv2&#x2F;SMBv3在官方文档里面是作为SMB 2协议的一个方言存在的</p>
-<p><img src="https://gitee.com/hangchuanin/blog_image/raw/master/images/Intranet_penetration/smb/image-20221219165558603.png" alt="image-20221219165558603"></p>
+<p><img src="https://raw.githubusercontent.com/hangchuanin/hangchuanin.github.io/images/images/Intranet_penetration/smb/image-20221219165558603.png" alt="image-20221219165558603"></p>
 <p>所以SMBv2的消息结构也是SMBv3的消息结构，当然SMBv3有很多自己的特性，比如SMBv3可以使用<a target="_blank" rel="noopener" href="https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-smb2/d6ce2327-a4c9-4793-be66-7b5bad2175fa">SMB2 TRANSFORM_HEADER</a>标头来发送加密消息，也可以使用<a target="_blank" rel="noopener" href="https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-smb2/1d435f21-9a21-4f4c-828e-624a176cf2a0">SMB2 COMPRESSION_TRANSFORM_HEADER</a>标头来发送压缩消息。</p>
 <p>我这里连接Windows Server 2012的SMB服务，这时候协商使用的是SMB3.0.2方言</p>
-<p><img src="https://gitee.com/hangchuanin/blog_image/raw/master/images/Intranet_penetration/smb/image-20221219193215856.png" alt="image-20221219193215856"></p>
+<p><img src="https://raw.githubusercontent.com/hangchuanin/hangchuanin.github.io/images/images/Intranet_penetration/smb/image-20221219193215856.png" alt="image-20221219193215856"></p>
 <p>而对比其它的数据包，结构也基本一致。</p>
-<p><img src="https://gitee.com/hangchuanin/blog_image/raw/master/images/Intranet_penetration/smb/image-20221219193414120.png" alt="image-20221219193414120"></p>
+<p><img src="https://raw.githubusercontent.com/hangchuanin/hangchuanin.github.io/images/images/Intranet_penetration/smb/image-20221219193414120.png" alt="image-20221219193414120"></p>
 <p>文章用到的数据包可以在<a target="_blank" rel="noopener" href="https://github.com/hangchuanin/Intranet_penetration_example">这里</a>找到。</p>
 <h2 id="0x04-参考"><a href="#0x04-参考" class="headerlink" title="0x04 参考"></a>0x04 参考</h2><p><a target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/openspecs/windows_protocols/ms-cifs/d416ff7c-c536-406e-a951-4f04b2fd1d2b">Common Internet File System (CIFS) Protocol</a><br><a target="_blank" rel="noopener" href="https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-smb2/5606ad47-5ee0-437a-817e-70c366052962">Server Message Block (SMB) Protocol Versions 2 and 3</a><br><a target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/windows/win32/fileio/microsoft-smb-protocol-and-cifs-protocol-overview">Microsoft SMB 协议和 CIFS 协议概述</a><br><a target="_blank" rel="noopener" href="https://blog.51cto.com/u_3044148/3355300?b=totalstatistic">在 Windows服务器中启用&#x2F;禁用SMBv1、SMBv2和SMBv3的方法</a></p>
 
