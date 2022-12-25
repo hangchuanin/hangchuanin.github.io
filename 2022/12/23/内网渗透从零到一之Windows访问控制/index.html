@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="0x00在内网渗透中Windows访问控制是比较重要的一个知识点，比如令牌窃取就用到了这块知识点，而笔者对Windows访问控制不太了解，所以系统的学习一下并做个记录。 此篇文章多是概念性的东西，读者可查看官方文档来了解这些知识。 0x01 访问控制访问控制是指控制谁可以访问操作系统中的资源的安全功能，访问控制模型有访问令牌和安全描述符这两个基础部分。 0x02 SID 安全标识符 (SID) 是">
+<meta property="og:type" content="article">
+<meta property="og:title" content="内网渗透从零到一之Windows访问控制">
+<meta property="og:url" content="http://hangchuanin.github.io/2022/12/23/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F%E4%BB%8E%E9%9B%B6%E5%88%B0%E4%B8%80%E4%B9%8BWindows%E8%AE%BF%E9%97%AE%E6%8E%A7%E5%88%B6/index.html">
+<meta property="og:site_name" content="hangchuanin&#39;s blog">
+<meta property="og:description" content="0x00在内网渗透中Windows访问控制是比较重要的一个知识点，比如令牌窃取就用到了这块知识点，而笔者对Windows访问控制不太了解，所以系统的学习一下并做个记录。 此篇文章多是概念性的东西，读者可查看官方文档来了解这些知识。 0x01 访问控制访问控制是指控制谁可以访问操作系统中的资源的安全功能，访问控制模型有访问令牌和安全描述符这两个基础部分。 0x02 SID 安全标识符 (SID) 是">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://raw.githubusercontent.com/hangchuanin/hangchuanin.github.io/images/images/Intranet_penetration/windows_access_control/image-20221223113801909.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/hangchuanin/hangchuanin.github.io/images/images/Intranet_penetration/windows_access_control/image-20221223151856307.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/hangchuanin/hangchuanin.github.io/images/images/Intranet_penetration/windows_access_control/image-20221223160025251.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/hangchuanin/hangchuanin.github.io/images/images/Intranet_penetration/windows_access_control/image-20221223182401021.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/hangchuanin/hangchuanin.github.io/images/images/Intranet_penetration/windows_access_control/image-20221223132944856.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/hangchuanin/hangchuanin.github.io/images/images/Intranet_penetration/windows_access_control/image-20221223133227333.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/hangchuanin/hangchuanin.github.io/images/images/Intranet_penetration/windows_access_control/image-20221223135315744.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/hangchuanin/hangchuanin.github.io/images/images/Intranet_penetration/windows_access_control/image-20221223135503549.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/hangchuanin/hangchuanin.github.io/images/images/Intranet_penetration/windows_access_control/image-20221223160734339.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/hangchuanin/hangchuanin.github.io/images/images/Intranet_penetration/windows_access_control/image-20221223142812254.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/hangchuanin/hangchuanin.github.io/images/images/Intranet_penetration/windows_access_control/image-20221223163122066.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/hangchuanin/hangchuanin.github.io/images/images/Intranet_penetration/windows_access_control/image-20221223164218960.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/hangchuanin/hangchuanin.github.io/images/images/Intranet_penetration/windows_access_control/image-20221223150702688.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/hangchuanin/hangchuanin.github.io/images/images/Intranet_penetration/windows_access_control/image-20221223172056801.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/hangchuanin/hangchuanin.github.io/images/images/Intranet_penetration/windows_access_control/image-20221223175143115.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/hangchuanin/hangchuanin.github.io/images/images/Intranet_penetration/windows_access_control/image-20221223175223536.png">
+<meta property="article:published_time" content="2022-12-23T11:48:46.000Z">
+<meta property="article:modified_time" content="2022-12-25T08:45:43.397Z">
+<meta property="article:author" content="hangchuanin">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/hangchuanin/hangchuanin.github.io/images/images/Intranet_penetration/windows_access_control/image-20221223113801909.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>内网渗透从零到一之Windows访问控制</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 6.3.0"><link rel="alternate" href="/rss2.xml" title="hangchuanin's blog" type="application/rss+xml">
+</head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/hangchuanin">Projects</a></li><!--
+     --><!--
+       --><li><a href="/categories/">Category</a></li><!--
+     --><!--
+       --><li><a href="/rss2.xml">RSS</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2022/12/20/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F%E4%BB%8E%E9%9B%B6%E5%88%B0%E4%B8%80%E4%B9%8B%E7%AE%A1%E9%81%93/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://hangchuanin.github.io/2022/12/23/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F%E4%BB%8E%E9%9B%B6%E5%88%B0%E4%B8%80%E4%B9%8BWindows%E8%AE%BF%E9%97%AE%E6%8E%A7%E5%88%B6/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://hangchuanin.github.io/2022/12/23/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F%E4%BB%8E%E9%9B%B6%E5%88%B0%E4%B8%80%E4%B9%8BWindows%E8%AE%BF%E9%97%AE%E6%8E%A7%E5%88%B6/&text=内网渗透从零到一之Windows访问控制"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://hangchuanin.github.io/2022/12/23/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F%E4%BB%8E%E9%9B%B6%E5%88%B0%E4%B8%80%E4%B9%8BWindows%E8%AE%BF%E9%97%AE%E6%8E%A7%E5%88%B6/&title=内网渗透从零到一之Windows访问控制"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://hangchuanin.github.io/2022/12/23/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F%E4%BB%8E%E9%9B%B6%E5%88%B0%E4%B8%80%E4%B9%8BWindows%E8%AE%BF%E9%97%AE%E6%8E%A7%E5%88%B6/&is_video=false&description=内网渗透从零到一之Windows访问控制"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=内网渗透从零到一之Windows访问控制&body=Check out this article: http://hangchuanin.github.io/2022/12/23/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F%E4%BB%8E%E9%9B%B6%E5%88%B0%E4%B8%80%E4%B9%8BWindows%E8%AE%BF%E9%97%AE%E6%8E%A7%E5%88%B6/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://hangchuanin.github.io/2022/12/23/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F%E4%BB%8E%E9%9B%B6%E5%88%B0%E4%B8%80%E4%B9%8BWindows%E8%AE%BF%E9%97%AE%E6%8E%A7%E5%88%B6/&title=内网渗透从零到一之Windows访问控制"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://hangchuanin.github.io/2022/12/23/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F%E4%BB%8E%E9%9B%B6%E5%88%B0%E4%B8%80%E4%B9%8BWindows%E8%AE%BF%E9%97%AE%E6%8E%A7%E5%88%B6/&title=内网渗透从零到一之Windows访问控制"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://hangchuanin.github.io/2022/12/23/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F%E4%BB%8E%E9%9B%B6%E5%88%B0%E4%B8%80%E4%B9%8BWindows%E8%AE%BF%E9%97%AE%E6%8E%A7%E5%88%B6/&title=内网渗透从零到一之Windows访问控制"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://hangchuanin.github.io/2022/12/23/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F%E4%BB%8E%E9%9B%B6%E5%88%B0%E4%B8%80%E4%B9%8BWindows%E8%AE%BF%E9%97%AE%E6%8E%A7%E5%88%B6/&title=内网渗透从零到一之Windows访问控制"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://hangchuanin.github.io/2022/12/23/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F%E4%BB%8E%E9%9B%B6%E5%88%B0%E4%B8%80%E4%B9%8BWindows%E8%AE%BF%E9%97%AE%E6%8E%A7%E5%88%B6/&name=内网渗透从零到一之Windows访问控制&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://hangchuanin.github.io/2022/12/23/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F%E4%BB%8E%E9%9B%B6%E5%88%B0%E4%B8%80%E4%B9%8BWindows%E8%AE%BF%E9%97%AE%E6%8E%A7%E5%88%B6/&t=内网渗透从零到一之Windows访问控制"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x00"><span class="toc-number">1.</span> <span class="toc-text">0x00</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-%E8%AE%BF%E9%97%AE%E6%8E%A7%E5%88%B6"><span class="toc-number">2.</span> <span class="toc-text">0x01 访问控制</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-SID"><span class="toc-number">3.</span> <span class="toc-text">0x02 SID</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-%E8%AE%BF%E9%97%AE%E4%BB%A4%E7%89%8C"><span class="toc-number">4.</span> <span class="toc-text">0x03 访问令牌</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#0x030-%E8%AE%BF%E9%97%AE%E4%BB%A4%E7%89%8C%E7%BB%93%E6%9E%84"><span class="toc-number">4.1.</span> <span class="toc-text">0x030 访问令牌结构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x031-%E5%8F%97%E9%99%90%E4%BB%A4%E7%89%8C"><span class="toc-number">4.2.</span> <span class="toc-text">0x031 受限令牌</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x032-%E8%AE%BF%E9%97%AE%E4%BB%A4%E7%89%8C%E4%B8%ADSID%E7%9A%84%E5%B1%9E%E6%80%A7"><span class="toc-number">4.3.</span> <span class="toc-text">0x032 访问令牌中SID的属性</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x04-%E5%AE%89%E5%85%A8%E6%8F%8F%E8%BF%B0%E7%AC%A6"><span class="toc-number">5.</span> <span class="toc-text">0x04 安全描述符</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#0x040-ACL%E7%BB%93%E6%9E%84"><span class="toc-number">5.1.</span> <span class="toc-text">0x040 ACL结构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x041-ACE%E7%BB%93%E6%9E%84"><span class="toc-number">5.2.</span> <span class="toc-text">0x041 ACE结构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x042-ACE%E7%9A%84%E7%BB%A7%E6%89%BF"><span class="toc-number">5.3.</span> <span class="toc-text">0x042 ACE的继承</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x04-%E8%AE%BF%E9%97%AE%E6%A3%80%E6%9F%A5"><span class="toc-number">6.</span> <span class="toc-text">0x04 访问检查</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x05-%E6%A8%A1%E6%8B%9F"><span class="toc-number">7.</span> <span class="toc-text">0x05 模拟</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x06-%E5%BC%BA%E5%88%B6%E5%AE%8C%E6%95%B4%E6%80%A7%E6%8E%A7%E5%88%B6"><span class="toc-number">8.</span> <span class="toc-text">0x06 强制完整性控制</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x07-%E5%8F%82%E8%80%83"><span class="toc-number">9.</span> <span class="toc-text">0x07 参考</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        内网渗透从零到一之Windows访问控制
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">hangchuanin</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2022-12-23T11:48:46.000Z" itemprop="datePublished">2022-12-23</time>
+        
+      
+    </div>
+
+
+      <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+    <div class="article-category">
+        <i class="fas fa-archive"></i>
+        <a class="category-link" href="/categories/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/">内网渗透</a>
+    </div>
+
+<div class="article-tag">
+    <i class="fa fa-eye"></i>
+    <span id="busuanzi_container_page_pv">
+        <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h2 id="0x00"><a href="#0x00" class="headerlink" title="0x00"></a>0x00</h2><p>在内网渗透中Windows访问控制是比较重要的一个知识点，比如令牌窃取就用到了这块知识点，而笔者对Windows访问控制不太了解，所以系统的学习一下并做个记录。</p>
+<p>此篇文章多是概念性的东西，读者可查看<a target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/windows/win32/secauthz/about-authorization">官方文档</a>来了解这些知识。</p>
+<h2 id="0x01-访问控制"><a href="#0x01-访问控制" class="headerlink" title="0x01 访问控制"></a>0x01 访问控制</h2><p>访问控制是指控制谁可以访问操作系统中的资源的安全功能，访问控制模型有访问令牌和安全描述符这两个基础部分。</p>
+<h2 id="0x02-SID"><a href="#0x02-SID" class="headerlink" title="0x02 SID"></a>0x02 SID</h2><blockquote>
+<p>安全标识符 (SID) 是用于标识受托人的唯一长度值。 每个帐户都有由颁发机构（例如Windows域控制器）颁发的唯一 SID，并存储在安全数据库中。 每次用户登录时，系统都会从数据库中检索该用户的 SID，并将其置于该用户的访问令牌中。 系统使用访问令牌中的 SID 在与Windows安全性的所有后续交互中标识用户。 当 SID 用作用户或组的唯一标识符时，无法再次使用它来标识另一个用户或组。</p>
+</blockquote>
+<p>访问令牌和安全描述符都用到了<code>SID</code>，<code>SID</code>用来标识某个用户或某个组，与<code>SID</code>有关的数据结构为<code>SID_AND_ATTRIBUTES</code>，用来存储一个<code>SID</code>和它的属性，原型如下</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">SID_AND_ATTRIBUTES</span> &#123;</span></span><br><span class="line"><span class="meta">#<span class="keyword">if</span> ...</span></span><br><span class="line">  PISID Sid;</span><br><span class="line"><span class="meta">#<span class="keyword">else</span></span></span><br><span class="line">  PSID  Sid;</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line">  ULONG Attributes;</span><br><span class="line">&#125; SID_AND_ATTRIBUTES, *PSID_AND_ATTRIBUTES;</span><br></pre></td></tr></table></figure>
+
+<p><code>SID</code>原型如下</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">SID</span> &#123;</span></span><br><span class="line">  UCHAR                    Revision;</span><br><span class="line">  UCHAR                    SubAuthorityCount;</span><br><span class="line">  SID_IDENTIFIER_AUTHORITY IdentifierAuthority;</span><br><span class="line"><span class="meta">#<span class="keyword">if</span> ...</span></span><br><span class="line">  ULONG                    *SubAuthority[];</span><br><span class="line"><span class="meta">#<span class="keyword">else</span></span></span><br><span class="line">  ULONG                    SubAuthority[ANYSIZE_ARRAY];</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line">&#125; SID, *PISID;</span><br></pre></td></tr></table></figure>
+
+<p><code>Revision</code>表示<code>SID</code>的修订级别，<code>IdentifierAuthority</code>为标识符颁发机构值，指定颁发此<code>SID</code>的颁发机构，<code>SubAuthorityCount</code>表示子授权数，为<code>SubAuthority</code>数组的条目数，<code>SubAuthority</code>表示一个或多个子授权值，<code>SID</code>的字符串表示形式如下</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">S-修订级别-标识符颁发机构值-第一个子授权值-第二个子授权值-第N个子授权值</span><br></pre></td></tr></table></figure>
+
+<p>例如<code>SID</code>值为<code>S-1-5-32-544</code>的解析如下</p>
+<ul>
+<li>修订级别为 1</li>
+<li>标识符颁发机构值 5 (SECURITY_NT_AUTHORITY)</li>
+<li>第一个子授权值 32 (SECURITY_BUILTIN_DOMAIN_RID)</li>
+<li>第二个子授权值 544 (DOMAIN_ALIAS_RID_ADMINS)</li>
+</ul>
+<p><code>SECURITY_NT_AUTHORITY/SECURITY_BUILTIN_DOMAIN_RID/DOMAIN_ALIAS_RID_ADMINS</code>这三个值的含义可以查看<a target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/windows/win32/secauthz/well-known-sids">标识符颁发机构表和子授权常量表</a>。</p>
+<p><code>Attributes</code>指定此<code>SID</code>的属性，<code>Attributes</code>的含义取决于<code>SID</code>的定义和使用。</p>
+<p>可用于操作<code>SID</code>的函数有如下</p>
+<p><img src="https://raw.githubusercontent.com/hangchuanin/hangchuanin.github.io/images/images/Intranet_penetration/windows_access_control/image-20221223113801909.png" alt="image-20221223113801909"></p>
+<p><code>SID</code>是以二进制形式存储的，而所谓的<code>S-1-5-32-544</code>只是<code>SID</code>的字符串表示形式而已，可以使用<code>ConvertSidToStringSid/ConvertStringSidToSid</code>这两个函数进行相互转换。</p>
+<h2 id="0x03-访问令牌"><a href="#0x03-访问令牌" class="headerlink" title="0x03 访问令牌"></a>0x03 访问令牌</h2><blockquote>
+<p>用户登录时，系统会对用户的帐户名称和密码进行身份验证。 如果登录成功，系统会创建访问令牌。 代表此用户执行的每个进程都将具有此访问令牌的副本。 访问令牌包含安全标识符，用于标识用户帐户和用户所属的任何组帐户。 令牌还包含用户或用户组持有的特权列表。 当进程尝试访问安全对象或执行需要特权的系统管理任务时，系统使用此令牌来标识关联的用户。</p>
+</blockquote>
+<p>访问令牌是描述进程或线程的安全上下文的对象，访问令牌是一个对象，其也有安全描述符，用于控制对访问令牌的访问。</p>
+<h3 id="0x030-访问令牌结构"><a href="#0x030-访问令牌结构" class="headerlink" title="0x030 访问令牌结构"></a>0x030 访问令牌结构</h3><p>访问令牌的结构如下</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">kd&gt; dt nt!_TOKEN</span><br><span class="line">   +<span class="number">0x000</span> TokenSource      : _TOKEN_SOURCE</span><br><span class="line">   +<span class="number">0x010</span> TokenId          : _LUID</span><br><span class="line">   +<span class="number">0x018</span> AuthenticationId : _LUID</span><br><span class="line">   +<span class="number">0x020</span> ParentTokenId    : _LUID</span><br><span class="line">   +<span class="number">0x028</span> ExpirationTime   : _LARGE_INTEGER</span><br><span class="line">   +<span class="number">0x030</span> TokenLock        : Ptr64 _ERESOURCE</span><br><span class="line">   +<span class="number">0x038</span> ModifiedId       : _LUID</span><br><span class="line">   +<span class="number">0x040</span> Privileges       : _SEP_TOKEN_PRIVILEGES</span><br><span class="line">   +<span class="number">0x058</span> AuditPolicy      : _SEP_AUDIT_POLICY</span><br><span class="line">   +<span class="number">0x074</span> SessionId        : Uint4B</span><br><span class="line">   +<span class="number">0x078</span> UserAndGroupCount : Uint4B</span><br><span class="line">   +<span class="number">0x07c</span> RestrictedSidCount : Uint4B</span><br><span class="line">   +<span class="number">0x080</span> VariableLength   : Uint4B</span><br><span class="line">   +<span class="number">0x084</span> DynamicCharged   : Uint4B</span><br><span class="line">   +<span class="number">0x088</span> DynamicAvailable : Uint4B</span><br><span class="line">   +<span class="number">0x08c</span> DefaultOwnerIndex : Uint4B</span><br><span class="line">   +<span class="number">0x090</span> UserAndGroups    : Ptr64 _SID_AND_ATTRIBUTES</span><br><span class="line">   +<span class="number">0x098</span> RestrictedSids   : Ptr64 _SID_AND_ATTRIBUTES</span><br><span class="line">   +<span class="number">0x0a0</span> PrimaryGroup     : Ptr64 Void</span><br><span class="line">   +<span class="number">0x0a8</span> DynamicPart      : Ptr64 Uint4B</span><br><span class="line">   +<span class="number">0x0b0</span> DefaultDacl      : Ptr64 _ACL</span><br><span class="line">   +<span class="number">0x0b8</span> TokenType        : _TOKEN_TYPE</span><br><span class="line">   +<span class="number">0x0bc</span> ImpersonationLevel : _SECURITY_IMPERSONATION_LEVEL</span><br><span class="line">   +<span class="number">0x0c0</span> TokenFlags       : Uint4B</span><br><span class="line">   +<span class="number">0x0c4</span> TokenInUse       : UChar</span><br><span class="line">   +<span class="number">0x0c8</span> IntegrityLevelIndex : Uint4B</span><br><span class="line">   +<span class="number">0x0cc</span> MandatoryPolicy  : Uint4B</span><br><span class="line">   +<span class="number">0x0d0</span> LogonSession     : Ptr64 _SEP_LOGON_SESSION_REFERENCES</span><br><span class="line">   +<span class="number">0x0d8</span> OriginatingLogonSession : _LUID</span><br><span class="line">   +<span class="number">0x0e0</span> SidHash          : _SID_AND_ATTRIBUTES_HASH</span><br><span class="line">   +<span class="number">0x1f0</span> RestrictedSidHash : _SID_AND_ATTRIBUTES_HASH</span><br><span class="line">   +<span class="number">0x300</span> pSecurityAttributes : Ptr64 _AUTHZBASEP_SECURITY_ATTRIBUTES_INFORMATION</span><br><span class="line">   +<span class="number">0x308</span> SessionObject    : Ptr64 Void</span><br><span class="line">   +<span class="number">0x310</span> VariablePart     : Uint8B</span><br></pre></td></tr></table></figure>
+
+<p>而我在官方文档里面找到的是<code>TOKEN_INFORMATION_CLASS</code>枚举类型，我们这里以<code>TOKEN_INFORMATION_CLASS</code>结构来分析访问令牌。其原型如下</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">enum</span> _<span class="title">TOKEN_INFORMATION_CLASS</span> &#123;</span></span><br><span class="line">  TokenUser,  <span class="comment">//标识访问令牌的用户</span></span><br><span class="line">  TokenGroups,  <span class="comment">//标识访问令牌的组</span></span><br><span class="line">  TokenPrivileges,  <span class="comment">//标识访问令牌拥有的特权</span></span><br><span class="line">  TokenOwner,  <span class="comment">//指定使用此令牌的进程创建的任何对象的默认所有者</span></span><br><span class="line">  TokenPrimaryGroup,  <span class="comment">//指定使用此令牌的进程创建的任何对象的默认主组</span></span><br><span class="line">  TokenDefaultDacl,  <span class="comment">//指定使用此令牌的进程创建的任何对象的默认DACL</span></span><br><span class="line">  TokenSource,  <span class="comment">//指定令牌源</span></span><br><span class="line">  TokenType,  <span class="comment">//指示此令牌是主令牌还是模拟令牌</span></span><br><span class="line">  TokenImpersonationLevel,  <span class="comment">//指示令牌的模拟级别</span></span><br><span class="line">  TokenStatistics,  <span class="comment">//指示令牌的各种统计信息</span></span><br><span class="line">  TokenRestrictedSids,  <span class="comment">//指示限制令牌的限制SID列表</span></span><br><span class="line">  TokenSessionId,</span><br><span class="line">  TokenGroupsAndPrivileges,</span><br><span class="line">  TokenSessionReference,  <span class="comment">//预留给系统使用</span></span><br><span class="line">  TokenSandBoxInert,</span><br><span class="line">  TokenAuditPolicy,  <span class="comment">//预留给系统使用</span></span><br><span class="line">  TokenOrigin,</span><br><span class="line">  TokenElevationType,</span><br><span class="line">  TokenLinkedToken,</span><br><span class="line">  TokenElevation,</span><br><span class="line">  TokenHasRestrictions,</span><br><span class="line">  TokenAccessInformation,</span><br><span class="line">  TokenVirtualizationAllowed,</span><br><span class="line">  TokenVirtualizationEnabled,</span><br><span class="line">  TokenIntegrityLevel,  <span class="comment">//指定令牌完整性级别</span></span><br><span class="line">  TokenUIAccess,</span><br><span class="line">  TokenMandatoryPolicy,  <span class="comment">//指定令牌的强制完整性策略</span></span><br><span class="line">  TokenLogonSid,  <span class="comment">//指定令牌的登录SID</span></span><br><span class="line">  TokenIsAppContainer,</span><br><span class="line">  TokenCapabilities,</span><br><span class="line">  TokenAppContainerSid,</span><br><span class="line">  TokenAppContainerNumber,</span><br><span class="line">  TokenUserClaimAttributes,</span><br><span class="line">  TokenDeviceClaimAttributes,</span><br><span class="line">  TokenRestrictedUserClaimAttributes,  <span class="comment">//预留给系统使用</span></span><br><span class="line">  TokenRestrictedDeviceClaimAttributes,  <span class="comment">//预留给系统使用</span></span><br><span class="line">  TokenDeviceGroups,</span><br><span class="line">  TokenRestrictedDeviceGroups,  <span class="comment">//预留给系统使用</span></span><br><span class="line">  TokenSecurityAttributes,  <span class="comment">//预留给系统使用</span></span><br><span class="line">  TokenIsRestricted,  <span class="comment">//预留给系统使用</span></span><br><span class="line">  TokenProcessTrustLevel,  <span class="comment">//预留给系统使用</span></span><br><span class="line">  TokenPrivateNameSpace,</span><br><span class="line">  TokenSingletonAttributes,</span><br><span class="line">  TokenBnoIsolation,</span><br><span class="line">  TokenChildProcessFlags,</span><br><span class="line">  TokenIsLessPrivilegedAppContainer,</span><br><span class="line">  TokenIsSandboxed,</span><br><span class="line">  TokenIsAppSilo,</span><br><span class="line">  MaxTokenInfoClass</span><br><span class="line">&#125; TOKEN_INFORMATION_CLASS, *PTOKEN_INFORMATION_CLASS;</span><br></pre></td></tr></table></figure>
+
+<p><code>TokenUser</code>指向<code>TOKEN_USER</code>结构，<code>TOKEN_USER</code>结构是一个结构体，原型如下</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">TOKEN_USER</span> &#123;</span></span><br><span class="line">  SID_AND_ATTRIBUTES User;</span><br><span class="line">&#125; TOKEN_USER, *PTOKEN_USER;</span><br></pre></td></tr></table></figure>
+
+<p>那么显而易见的<code>TokenUser</code>就是用来标识访问令牌的用户的</p>
+<p><code>TokenGroups</code>参数指向<code>TOKEN_GROUPS</code>，<code>TOKEN_GROUPS</code>原型如下</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">TOKEN_GROUPS</span> &#123;</span></span><br><span class="line">  ULONG              GroupCount;</span><br><span class="line"><span class="meta">#<span class="keyword">if</span> ...</span></span><br><span class="line">  SID_AND_ATTRIBUTES *Groups[];</span><br><span class="line"><span class="meta">#<span class="keyword">else</span></span></span><br><span class="line">  SID_AND_ATTRIBUTES Groups[ANYSIZE_ARRAY];  <span class="comment">//ANYSIZE_ARRAY为常量值1</span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line">&#125; TOKEN_GROUPS, *PTOKEN_GROUPS;</span><br></pre></td></tr></table></figure>
+
+<p><code>GroupCount</code>用于指定访问令牌的组数，因为组不同于用户，一个访问令牌可以有多个组，所以这里<code>Groups</code>指向一个或多个<code>SID_AND_ATTRIBUTES</code>结构，用于标识一个或多个组。</p>
+<p><code>TokenPrivileges</code>参数指向<code>TOKEN_PRIVILEGES</code>结构，<code>TOKEN_PRIVILEGES</code>原型如下</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">TOKEN_PRIVILEGES</span> &#123;</span></span><br><span class="line">  ULONG               PrivilegeCount;</span><br><span class="line">  LUID_AND_ATTRIBUTES Privileges[ANYSIZE_ARRAY];</span><br><span class="line">&#125; TOKEN_PRIVILEGES, *PTOKEN_PRIVILEGES;</span><br></pre></td></tr></table></figure>
+
+<p><code>PrivilegeCount</code>参数指定<code>Privileges</code>数组中的条目数，但是在原型里面<code>Privileges</code>数组条目数是写死的为一。</p>
+<p><code>Privileges</code>参数是<code>LUID_AND_ATTRIBUTES</code>数组，<code>LUID_AND_ATTRIBUTES</code>原型如下</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">LUID_AND_ATTRIBUTES</span> &#123;</span></span><br><span class="line">  LUID  Luid;</span><br><span class="line">  ULONG Attributes;</span><br><span class="line">&#125; LUID_AND_ATTRIBUTES, *PLUID_AND_ATTRIBUTES;</span><br></pre></td></tr></table></figure>
+
+<p><code>Luid</code>参数指定<code>LUID_AND_ATTRIBUTES</code>标识的特权，可以使用<code>LookupPrivilegeNameA</code>函数来把<code>Luid</code>转换为特权名，<code>Attributes</code>指定<code>LUID</code>的属性，也就是指定特权的属性，具体含义取决于<code>LUID</code>的定义和用法。</p>
+<p>比较重要的就是上面介绍的三个参数，其它属性值的含义可以看<a target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/windows-hardware/drivers/ddi/ntifs/ne-ntifs-_token_information_class?redirectedfrom=MSDN">这里</a></p>
+<p>可用于操作访问令牌的函数有如下</p>
+<p><img src="https://raw.githubusercontent.com/hangchuanin/hangchuanin.github.io/images/images/Intranet_penetration/windows_access_control/image-20221223151856307.png" alt="image-20221223151856307"></p>
+<h3 id="0x031-受限令牌"><a href="#0x031-受限令牌" class="headerlink" title="0x031 受限令牌"></a>0x031 受限令牌</h3><p>可以使用<code>CreateRestrictedToken</code>函数来创建一个新的访问令牌，该访问令牌是现有访问令牌的受限版本，在受限令牌的安全上下文中运行的进程或模拟线程在其访问安全对象或执行特权操作的能力方面受到限制。可以通过减少令牌中的特权、增加限制SID列表中的条目、将仅拒绝属性应用于访问令牌中的SID来削弱访问令牌的权限。</p>
+<h3 id="0x032-访问令牌中SID的属性"><a href="#0x032-访问令牌中SID的属性" class="headerlink" title="0x032 访问令牌中SID的属性"></a>0x032 访问令牌中SID的属性</h3><p><code>SID_AND_ATTRIBUTES</code>结构有一个<code>Attributes</code>属性，是用来描述<code>SID</code>的属性的，<code>Attributes</code>属性含义取决于<code>SID</code>的定义和使用。在访问令牌这里，它可以设置如下两个属性</p>
+<p><img src="https://raw.githubusercontent.com/hangchuanin/hangchuanin.github.io/images/images/Intranet_penetration/windows_access_control/image-20221223160025251.png" alt="image-20221223160025251"></p>
+<p>如果设置了第一个属性，则在进行访问检查时会检查每一条应用于此SID的DACE，如果设置了第二个属性，则在进行访问检查时只会检查应用于此SID的拒绝DACE，而不会检查应用于此SID的允许DACE，相当于是允许DACE无效了，通常通过设置第二个属性来创建受限令牌。</p>
+<h2 id="0x04-安全描述符"><a href="#0x04-安全描述符" class="headerlink" title="0x04 安全描述符"></a>0x04 安全描述符</h2><blockquote>
+<p>创建安全对象时，系统会为其分配一个安全描述符，其中包含其创建者指定的安全信息;如果未指定安全信息，则为默认安全信息分配。 </p>
+</blockquote>
+<p>安全描述符包含与安全对象关联的安全信息，安全信息有如下</p>
+<ul>
+<li>对象所有者和主组的安全标识符 (SID) 。</li>
+<li>指定允许或拒绝特定用户或组的访问权限的 DACL。</li>
+<li>一个 SACL ，指定为对象生成审核记录的访问尝试的类型。</li>
+<li>一组控制位，用于限定安全描述符或其单个成员的含义。</li>
+</ul>
+<p>它的原型如下</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">SECURITY_DESCRIPTOR</span> &#123;</span></span><br><span class="line">  BYTE                        Revision;  <span class="comment">//指定安全描述符的修订级别</span></span><br><span class="line">  BYTE                        Sbz1;  <span class="comment">//用于对齐的填充值</span></span><br><span class="line">  SECURITY_DESCRIPTOR_CONTROL Control;</span><br><span class="line">  PSID                        Owner;</span><br><span class="line">  PSID                        Group;</span><br><span class="line">  PACL                        Sacl;</span><br><span class="line">  PACL                        Dacl;</span><br><span class="line">&#125; SECURITY_DESCRIPTOR, *PISECURITY_DESCRIPTOR;</span><br></pre></td></tr></table></figure>
+
+<p>安全描述符和<code>SID</code>一样，也有字符串表示形式，是一个以NULL结尾的字符串，格式如下</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">O:owner_sid</span><br><span class="line">G:group_sid</span><br><span class="line">D:dacl_flags(string_ace1)(string_ace2)... (string_acen)</span><br><span class="line">S:sacl_flags(string_ace1)(string_ace2)... (string_acen)</span><br></pre></td></tr></table></figure>
+
+<p><code>owner_sid</code>参数标识对象的所有者的<code>SID</code>，对应<code>SECURITY_DESCRIPTOR</code>结构中的<code>Owner</code>参数。</p>
+<p><code>group_sid</code>参数标识对象的主要组的<code>SID</code>，对应<code>SECURITY_DESCRIPTOR</code>结构中的<code>Group</code>参数。</p>
+<p><code>dacl_flags</code>参数是应用于<code>DACL</code>的安全描述符控制标志，<code>sacl_flags</code>参数是应用于<code>SACL</code>的安全描述符控制标志，这两个参数值反映了<code>SECURITY_DESCRIPTOR</code>结构的<code>Control</code>参数的一部分。为什么是一部分，是因为<code>Control</code>如果设置了<code>SE_DACL_PRESENT</code>控制标志，在安全描述符的字符串形式中是以<code>D:</code>来反映设置了此标志的，<code>Control</code>可以设置的控制标志可以看<a target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/windows-hardware/drivers/ifs/security-descriptor-control">这里</a></p>
+<p><code>SECURITY_DESCRIPTOR_CONTROL</code>定义如下，就是一个<code>WORD</code>类型，值为设置的控制标志的累加值</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> WORD   SECURITY_DESCRIPTOR_CONTROL, *PSECURITY_DESCRIPTOR_CONTROL;</span><br></pre></td></tr></table></figure>
+
+<h3 id="0x040-ACL结构"><a href="#0x040-ACL结构" class="headerlink" title="0x040 ACL结构"></a>0x040 ACL结构</h3><p><code>PACL</code>原型如下</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">ACL</span> &#123;</span></span><br><span class="line">  BYTE AclRevision;  <span class="comment">//指定ACL的修订版本</span></span><br><span class="line">  BYTE Sbz1;  <span class="comment">//用于对齐的填充值</span></span><br><span class="line">  WORD AclSize;  <span class="comment">//指定ACL的大小,包括ACL结构和所有ACE</span></span><br><span class="line">  WORD AceCount;</span><br><span class="line">  WORD Sbz2;</span><br><span class="line">&#125; ACL;</span><br></pre></td></tr></table></figure>
+
+<p><code>AclSize</code>指定ACL的大小，包括ACL结构和所有ACE。<code>AceCount</code>指定ACL中存储的ACE条目数。</p>
+<p>这个结构后面紧跟的是DACE或SACE。</p>
+<h3 id="0x041-ACE结构"><a href="#0x041-ACE结构" class="headerlink" title="0x041 ACE结构"></a>0x041 ACE结构</h3><p>ACL由一条条ACE组成，组成DACL的ACE我们称其为DACE，组成SACL的ACE我们称其为SACE。ACE有六种类型，其中三种受所有安全对象支持，另外三种类型是目录服务对象支持的特定于对象的ACE。</p>
+<p>所有安全对象都支持的三种 ACE 类型为如下</p>
+<p><img src="https://raw.githubusercontent.com/hangchuanin/hangchuanin.github.io/images/images/Intranet_penetration/windows_access_control/image-20221223182401021.png" alt="image-20221223182401021"></p>
+<p>微软设计了很多结构体来标识不同特定种类的ACE，每个结构体都是以<code>ACE_HEADER</code>开头的，<code>ACE_HEADER</code>的原型如下</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">ACE_HEADER</span> &#123;</span></span><br><span class="line">  BYTE AceType;</span><br><span class="line">  BYTE AceFlags;</span><br><span class="line">  WORD AceSize;</span><br><span class="line">&#125; ACE_HEADER;</span><br></pre></td></tr></table></figure>
+
+<p><code>AceType</code>参数指定此结构体是什么结构，它可以是如下值</p>
+<p><img src="https://raw.githubusercontent.com/hangchuanin/hangchuanin.github.io/images/images/Intranet_penetration/windows_access_control/image-20221223132944856.png" alt="image-20221223132944856"></p>
+<p><code>AceFlags</code>参数是ACE的控制标志，有些标志只能用于某一类型的ACE，它的值可以为如下</p>
+<p><img src="https://raw.githubusercontent.com/hangchuanin/hangchuanin.github.io/images/images/Intranet_penetration/windows_access_control/image-20221223133227333.png" alt="image-20221223133227333"></p>
+<p><code>AceSize</code>参数指定ACE的大小，单位为字节。</p>
+<p>这里我们先举例三个微软设计的结构体，分别是<code>ACCESS_ALLOWED_ACE</code>、<code>ACCESS_DENIED_ACE</code>、<code>SYSTEM_AUDIT_ACE</code>。</p>
+<p><code>ACCESS_ALLOWED_ACE</code>的原型为如下</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">ACCESS_ALLOWED_ACE</span> &#123;</span></span><br><span class="line">  ACE_HEADER  Header;</span><br><span class="line">  ACCESS_MASK Mask;</span><br><span class="line">  DWORD       SidStart;</span><br><span class="line">&#125; ACCESS_ALLOWED_ACE;</span><br></pre></td></tr></table></figure>
+
+<p><code>ACCESS_ALLOWED_ACE</code>对应的ACE类型为所有安全对象都支持的允许访问的ACE</p>
+<p><code>ACCESS_DENIED_ACE</code>的原型为如下</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">ACCESS_DENIED_ACE</span> &#123;</span></span><br><span class="line">  ACE_HEADER  Header;</span><br><span class="line">  ACCESS_MASK Mask;</span><br><span class="line">  DWORD       SidStart;</span><br><span class="line">&#125; ACCESS_DENIED_ACE;</span><br></pre></td></tr></table></figure>
+
+<p><code>ACCESS_DENIED_ACE</code>对应的ACE类型为所有安全对象都支持的访问被拒绝的ACE</p>
+<p><code>SYSTEM_AUDIT_ACE</code>的原型为如下</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">SYSTEM_AUDIT_ACE</span> &#123;</span></span><br><span class="line">  ACE_HEADER  Header;</span><br><span class="line">  ACCESS_MASK Mask;</span><br><span class="line">  DWORD       SidStart;</span><br><span class="line">&#125; SYSTEM_AUDIT_ACE;</span><br></pre></td></tr></table></figure>
+
+<p><code>SYSTEM_AUDIT_ACE</code>对应的ACE类型为所有安全对象都支持的系统审核ACE</p>
+<p>其实通过原型可以看到，<code>ACCESS_ALLOWED_ACE</code>、<code>ACCESS_DENIED_ACE</code>、<code>SYSTEM_AUDIT_ACE</code>这三个的结构是一样的。</p>
+<p><code>ACCESS_MASK</code>结构的原型如下</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> DWORD ACCESS_MASK;</span><br></pre></td></tr></table></figure>
+
+<p>是一个<code>DWORD</code>类型，用来指定此ACE是用来控制哪些权限的访问的，<code>ACCESS_MASK</code>可以用来表示标准权限、特定权限和泛型权限等，<code>ACCESS_MASK</code>值为这些权限的累计。<code>ACCESS_MASK</code>有32个位，每个位分配用途如下</p>
+<p><img src="https://raw.githubusercontent.com/hangchuanin/hangchuanin.github.io/images/images/Intranet_penetration/windows_access_control/image-20221223135315744.png" alt="image-20221223135315744"></p>
+<p>16位到23位用于表示标准权限，每一位代表的权限如下</p>
+<p><img src="https://raw.githubusercontent.com/hangchuanin/hangchuanin.github.io/images/images/Intranet_penetration/windows_access_control/image-20221223135503549.png" alt="image-20221223135503549"></p>
+<p>0位到15位用于表示特定权限，不同的安全对象拥有不同的特定权限，比如访问令牌的特定权限有如下，对应的16进制值在<code>WinNT.h</code>中定义</p>
+<p><img src="https://raw.githubusercontent.com/hangchuanin/hangchuanin.github.io/images/images/Intranet_penetration/windows_access_control/image-20221223160734339.png" alt="image-20221223160734339"></p>
+<p>28位到31位为泛型访问权限，每种类型的安全对象将这些泛型访问权限映射到一组特定于标准和特定于对象的访问权限，比如Windows文件对象将<code>GENERIC_READ</code>位映射到<code>READ_CONTROL</code>和 <code>SYNCHRONIZE</code>标准访问权限以及<code>FILE_READ_DATA</code>、<code>FILE_READ_EA</code>和<code>FILE_READ_ATTRIBUTES</code>特定于对象的访问权限。由于自动映射的特性，一般可以通过指定泛型访问权限来指示所请求的安全对象的权限， 这通常比指定所有相应的标准和特定权限更简单。</p>
+<p><code>SidStart</code>参数是<code>SID</code>的头四个字节，后面紧跟<code>SID</code>的剩余部分，<code>SID</code>用来标识该ACE对哪个用户或组生效（其实这里也可以对一个登录会话有效）。</p>
+<p>除了<code>ACCESS_ALLOWED_ACE</code>、<code>ACCESS_DENIED_ACE</code>、<code>SYSTEM_AUDIT_ACE</code>这三个结构之外，比较常用到的还有<code>ACCESS_ALLOWED_OBJECT_ACE</code>和<code>ACCESS_DENIED_OBJECT_ACE</code>，是特定于对象的ACE，特定于对象的ACE应用于目录服务对象。</p>
+<p><code>ACCESS_ALLOWED_OBJECT_ACE</code>的原型如下</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">ACCESS_ALLOWED_OBJECT_ACE</span> &#123;</span></span><br><span class="line">  ACE_HEADER  Header;</span><br><span class="line">  ACCESS_MASK Mask;</span><br><span class="line">  DWORD       Flags;</span><br><span class="line">  GUID        ObjectType;</span><br><span class="line">  GUID        InheritedObjectType;</span><br><span class="line">  DWORD       SidStart;</span><br><span class="line">&#125; ACCESS_ALLOWED_OBJECT_ACE, *PACCESS_ALLOWED_OBJECT_ACE;</span><br></pre></td></tr></table></figure>
+
+<p><code>ACCESS_DENIED_OBJECT_ACE</code>的原型如下</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">ACCESS_DENIED_OBJECT_ACE</span> &#123;</span></span><br><span class="line">  ACE_HEADER  Header;</span><br><span class="line">  ACCESS_MASK Mask;</span><br><span class="line">  DWORD       Flags;</span><br><span class="line">  GUID        ObjectType;</span><br><span class="line">  GUID        InheritedObjectType;</span><br><span class="line">  DWORD       SidStart;</span><br><span class="line">&#125; ACCESS_DENIED_OBJECT_ACE, *PACCESS_DENIED_OBJECT_ACE;</span><br></pre></td></tr></table></figure>
+
+<p><code>ACCESS_ALLOWED_OBJECT_ACE</code>和<code>ACCESS_DENIED_OBJECT_ACE</code>的结构也是一样的，<code>ACCESS_ALLOWED_OBJECT_ACE</code>用于特定于对象的允许访问ACE，<code>ACCESS_DENIED_OBJECT_ACE</code>用于特定于对象的拒绝访问ACE。<code>ACCESS_ALLOWED_OBJECT_ACE</code>、<code>ACCESS_DENIED_OBJECT_ACE</code>这两个结构相比前面的三个结构多了几个属性。</p>
+<p><code>Flags</code>属性用来指示<code>ObjectType</code>和<code>InheritedObjectType</code>是否存在，它的值可以是如下一个或多个值</p>
+<p><img src="https://raw.githubusercontent.com/hangchuanin/hangchuanin.github.io/images/images/Intranet_penetration/windows_access_control/image-20221223142812254.png" alt="image-20221223142812254"></p>
+<p><code>ObjectType</code>属性标识属性集的GUID结构、属性的GUID结构、扩展权限的GUID结构、子对象的类型对应的GUID结构。</p>
+<p><code>InheritedObjectType</code>属性标识可以继承此ACE的子对象的类型对应的GUID结构。</p>
+<p><img src="https://raw.githubusercontent.com/hangchuanin/hangchuanin.github.io/images/images/Intranet_penetration/windows_access_control/image-20221223163122066.png" alt="image-20221223163122066"></p>
+<p>ACE也有字符串表示形式，格式如下</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ace_type;ace_flags;rights;object_guid;inherit_object_guid;account_sid;(resource_attribute)</span><br></pre></td></tr></table></figure>
+
+<p><code>ace_type</code>对应<code>ACE_HEADER</code>结构的<code>AceType</code>，<code>ace_flags</code>对应<code>ACE_HEADER</code>结构的<code>AceFlags</code>，<code>rights</code>对应各ACE结构中的<code>Mask</code>，<code>object_guid</code>对应<code>ObjectType</code>，如果ACE结构中没有<code>ObjectType</code>则置空，<code>inherit_object_guid</code>对应<code>InheritedObjectType</code>，，如果ACE结构中没有<code>inherit_object_guid</code>则置空，<code>account_sid</code>对应各ACE中的<code>SID</code>。</p>
+<p><code>resource_attribute</code>仅适用于资源 ACE，是可选的。</p>
+<p>可以使用<code>ConvertSecurityDescriptorToStringSecurityDescriptorA/ConvertStringSecurityDescriptorToSecurityDescriptorA</code>函数转换字符串形式ACE和二进制形式ACE。</p>
+<h3 id="0x042-ACE的继承"><a href="#0x042-ACE的继承" class="headerlink" title="0x042 ACE的继承"></a>0x042 ACE的继承</h3><p>非特定于对象的ACE的继承策略受到父ACE的<code>ACE_HEADER</code>结构的<code>AceFlags</code>属性影响，如下</p>
+<p><img src="https://raw.githubusercontent.com/hangchuanin/hangchuanin.github.io/images/images/Intranet_penetration/windows_access_control/image-20221223164218960.png" alt="image-20221223164218960"></p>
+<p>除此之外，继承策略还受到安全描述符的控制标志影响，例如当安全描述符的控制标志设置了<code>SE_SACL_PROTECTED</code>标志时，此时SACL不会继承父对象的SACE，当安全描述符的控制标志设置了<code>SE_DACL_PROTECTED</code>标志时，此时DACL不会继承父对象的DACE。</p>
+<p>特定于对象的ACE的继承策略除了受到<code>ACE_HEADER</code>结构的<code>AceFlags</code>属性和安全描述符的控制标志影响之外，还受到<code>InheritedObjectType</code>属性影响。</p>
+<p>具体策略可查看<a target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/windows/win32/secauthz/ace-inheritance-rules">这里</a></p>
+<p>我们知道ACE的顺序对访问检查来说是非常重要的，继承来的ACE和非继承来的ACE在对应ACL中的顺序是如下一个策略</p>
+<ol>
+<li>所有显式 ACE 都放置在任何继承的 ACE 之前。</li>
+<li>在显式 ACE 组中，访问被拒绝的 ACE 放置在允许访问的 ACE 之前。</li>
+<li>继承的 ACE 按继承顺序排列。 从子对象的父级继承的 ACE 先来，然后从祖父母继承的 ACE，依此类传对象树。</li>
+<li>对于每个继承的 ACE 级别，访问被拒绝的 ACE 放置在允许访问的 ACE 之前。</li>
+</ol>
+<h2 id="0x04-访问检查"><a href="#0x04-访问检查" class="headerlink" title="0x04 访问检查"></a>0x04 访问检查</h2><p>当线程尝试访问安全对象时，系统会根据安全对象的安全描述符和线程的访问令牌来决定授予或者拒绝访问。</p>
+<p>系统按顺序检查每个DACE，当线程请求的所有权限都被允许时则允许线程的请求（必须所有请求的权限都运行，有一个权限没有被拒绝，也没有被允许时也是拒绝线程的访问的），当线程请求的任一权限被拒绝时则拒绝线程的请求，当检查完所有的ACE也没有前面两种情况发生时，系统会拒绝线程的请求。因为系统是按顺序检查对象的每个DACE的，所以对象中的DACE顺序很重要，一个例子如下</p>
+<p><img src="https://raw.githubusercontent.com/hangchuanin/hangchuanin.github.io/images/images/Intranet_penetration/windows_access_control/image-20221223150702688.png" alt="image-20221223150702688"></p>
+<p>线程A在第一条DACE中被拒绝，所以拒绝授予线程A请求的权限，而线程B在第二条DACE中被允许，所以授予线程A请求的权限，当然这个例子里面线程没有具体的请求权限。当第一条DACE放到后面时，则线程A的请求会被允许。</p>
+<h2 id="0x05-模拟"><a href="#0x05-模拟" class="headerlink" title="0x05 模拟"></a>0x05 模拟</h2><p>服务器应用程序中的线程可以模拟客户端，这样服务器线程就可以代表该客户端访问服务器上的对象。</p>
+<p>模拟级别决定服务器模拟客户端的能力，有如下模拟级别</p>
+<p><img src="https://raw.githubusercontent.com/hangchuanin/hangchuanin.github.io/images/images/Intranet_penetration/windows_access_control/image-20221223172056801.png" alt="image-20221223172056801"></p>
+<p>模拟级别可以由客户端指定，例如命名管道客户端可以调用CreateFile函数以打开命名管道的句柄并指定服务器的模拟级别。当命名管道、RPC 或 DDE 连接是远程的时，将忽略传递给CreateFile以设置模拟级别的标志。 在这种情况下，客户端的模拟级别由服务器启用的模拟级别确定，该级别由目录服务中的服务器帐户上的标志设置。 </p>
+<p>当服务器的模拟线程模拟客户端时，系统将检查模拟令牌来决定是否允许访问，而不是检查模拟线程的进程的主访问令牌，但在以下情况是使用进程的主访问令牌</p>
+<ul>
+<li>如果模拟线程调用CreateProcess函数，则新进程始终继承进程的主要令牌。</li>
+<li>对于需要SE_TCB_NAME特权（如 LogonUser 函数）的函数，系统始终检查进程主令牌中的特权。</li>
+<li>对于需要SE_AUDIT_NAME特权（如 ObjectOpenAuditAlarm 函数）的函数，系统始终在进程的主令牌中检查特权。</li>
+<li>在对 OpenThreadToken 函数的调用中，线程可以指定该函数是使用模拟令牌还是主令牌来确定是否授予请求的访问权限。</li>
+</ul>
+<p><code>TokenType</code>属性确定令牌是模拟令牌还是主令牌，<code>TokenType</code>属性指向<code>TOKEN_TYPE</code>，<code>TOKEN_TYPE</code>的原型如下</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">enum</span> _<span class="title">TOKEN_TYPE</span> &#123;</span></span><br><span class="line">  TokenPrimary,</span><br><span class="line">  TokenImpersonation</span><br><span class="line">&#125; TOKEN_TYPE;</span><br></pre></td></tr></table></figure>
+
+<p>当枚举值为<code>TokenPrimary</code>时标识令牌为主令牌，当枚举值为<code>TokenImpersonation</code>时标识令牌为模拟令牌。</p>
+<h2 id="0x06-强制完整性控制"><a href="#0x06-强制完整性控制" class="headerlink" title="0x06 强制完整性控制"></a>0x06 强制完整性控制</h2><p>控制对安全对象的访问除了通过DACL控制之外，还通过强制完整性来控制。</p>
+<blockquote>
+<p>强制完整性控制使用完整性级别和强制策略来评估访问权限。安全主体和安全对象分配的完整性级别，用于确定其保护或访问级别。 例如，具有低完整性级别的主体无法写入具有中等完整性级别的对象，即使该对象的 DACL 允许对主体进行写入访问。</p>
+</blockquote>
+<p>完整性标签指定安全对象和安全主体的完整性级别，完整性标签由完整性SID表示。安全对象的完整性SID存储在安全对象的一个特殊ACE中，该ACE为<code>SYSTEM_MANDATORY_LABEL_ACE</code>，原型为如下</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">SYSTEM_MANDATORY_LABEL_ACE</span> &#123;</span></span><br><span class="line">  ACE_HEADER  Header;</span><br><span class="line">  ACCESS_MASK Mask;</span><br><span class="line">  DWORD       SidStart;</span><br><span class="line">&#125; SYSTEM_MANDATORY_LABEL_ACE, *PSYSTEM_MANDATORY_LABEL_ACE;</span><br></pre></td></tr></table></figure>
+
+<p><code>SidStart</code>属性为完整性SID的前4个字节，完整性SID的RID指定安全对象的强制完整性级别，RID的值可以为如下</p>
+<p><img src="https://raw.githubusercontent.com/hangchuanin/hangchuanin.github.io/images/images/Intranet_penetration/windows_access_control/image-20221223175143115.png" alt="image-20221223175143115"></p>
+<p><code>Mask</code>属性指定一些有关强制完整性的访问策略，它的值可以为如下</p>
+<p><img src="https://raw.githubusercontent.com/hangchuanin/hangchuanin.github.io/images/images/Intranet_penetration/windows_access_control/image-20221223175223536.png" alt="image-20221223175223536"></p>
+<p>任何没有完整性 SID 的对象都被视为具有中等完整性的对象。</p>
+<p>安全主体的完整性 SID 存储在其访问令牌的<code>TokenIntegrityLevel</code>属性中，有关强制完整性的访问策略在<code>TokenMandatoryPolicy</code>属性中指定。 </p>
+<h2 id="0x07-参考"><a href="#0x07-参考" class="headerlink" title="0x07 参考"></a>0x07 参考</h2><p><a target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/windows/win32/secauthz/about-authorization">https://learn.microsoft.com/zh-cn/windows/win32/secauthz/about-authorization</a></p>
+
+  </div>
+</article>
+
+    
+<script src="/js/Valine.min.js"></script>
+
+    <div id="vcomments" class="blog-post-comments"></div>
+    <script>
+        new Valine({
+            el: '#vcomments',
+            appId: 'XLJfI6ySoXB3RPs2qCDE6Nlh-gzGzoHsz',
+            appKey: 'TgxkqpiqcUffwrwbGpafgNBg',
+            placeholder: '说点什么呢',
+            avatar: 'mp',
+            visitor: true,
+        })
+    </script>
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a target="_blank" rel="noopener" href="https://github.com/hangchuanin">Projects</a></li>
+         
+          <li><a href="/categories/">Category</a></li>
+         
+          <li><a href="/rss2.xml">RSS</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x00"><span class="toc-number">1.</span> <span class="toc-text">0x00</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-%E8%AE%BF%E9%97%AE%E6%8E%A7%E5%88%B6"><span class="toc-number">2.</span> <span class="toc-text">0x01 访问控制</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-SID"><span class="toc-number">3.</span> <span class="toc-text">0x02 SID</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-%E8%AE%BF%E9%97%AE%E4%BB%A4%E7%89%8C"><span class="toc-number">4.</span> <span class="toc-text">0x03 访问令牌</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#0x030-%E8%AE%BF%E9%97%AE%E4%BB%A4%E7%89%8C%E7%BB%93%E6%9E%84"><span class="toc-number">4.1.</span> <span class="toc-text">0x030 访问令牌结构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x031-%E5%8F%97%E9%99%90%E4%BB%A4%E7%89%8C"><span class="toc-number">4.2.</span> <span class="toc-text">0x031 受限令牌</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x032-%E8%AE%BF%E9%97%AE%E4%BB%A4%E7%89%8C%E4%B8%ADSID%E7%9A%84%E5%B1%9E%E6%80%A7"><span class="toc-number">4.3.</span> <span class="toc-text">0x032 访问令牌中SID的属性</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x04-%E5%AE%89%E5%85%A8%E6%8F%8F%E8%BF%B0%E7%AC%A6"><span class="toc-number">5.</span> <span class="toc-text">0x04 安全描述符</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#0x040-ACL%E7%BB%93%E6%9E%84"><span class="toc-number">5.1.</span> <span class="toc-text">0x040 ACL结构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x041-ACE%E7%BB%93%E6%9E%84"><span class="toc-number">5.2.</span> <span class="toc-text">0x041 ACE结构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x042-ACE%E7%9A%84%E7%BB%A7%E6%89%BF"><span class="toc-number">5.3.</span> <span class="toc-text">0x042 ACE的继承</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x04-%E8%AE%BF%E9%97%AE%E6%A3%80%E6%9F%A5"><span class="toc-number">6.</span> <span class="toc-text">0x04 访问检查</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x05-%E6%A8%A1%E6%8B%9F"><span class="toc-number">7.</span> <span class="toc-text">0x05 模拟</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x06-%E5%BC%BA%E5%88%B6%E5%AE%8C%E6%95%B4%E6%80%A7%E6%8E%A7%E5%88%B6"><span class="toc-number">8.</span> <span class="toc-text">0x06 强制完整性控制</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x07-%E5%8F%82%E8%80%83"><span class="toc-number">9.</span> <span class="toc-text">0x07 参考</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://hangchuanin.github.io/2022/12/23/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F%E4%BB%8E%E9%9B%B6%E5%88%B0%E4%B8%80%E4%B9%8BWindows%E8%AE%BF%E9%97%AE%E6%8E%A7%E5%88%B6/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://hangchuanin.github.io/2022/12/23/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F%E4%BB%8E%E9%9B%B6%E5%88%B0%E4%B8%80%E4%B9%8BWindows%E8%AE%BF%E9%97%AE%E6%8E%A7%E5%88%B6/&text=内网渗透从零到一之Windows访问控制"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://hangchuanin.github.io/2022/12/23/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F%E4%BB%8E%E9%9B%B6%E5%88%B0%E4%B8%80%E4%B9%8BWindows%E8%AE%BF%E9%97%AE%E6%8E%A7%E5%88%B6/&title=内网渗透从零到一之Windows访问控制"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://hangchuanin.github.io/2022/12/23/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F%E4%BB%8E%E9%9B%B6%E5%88%B0%E4%B8%80%E4%B9%8BWindows%E8%AE%BF%E9%97%AE%E6%8E%A7%E5%88%B6/&is_video=false&description=内网渗透从零到一之Windows访问控制"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=内网渗透从零到一之Windows访问控制&body=Check out this article: http://hangchuanin.github.io/2022/12/23/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F%E4%BB%8E%E9%9B%B6%E5%88%B0%E4%B8%80%E4%B9%8BWindows%E8%AE%BF%E9%97%AE%E6%8E%A7%E5%88%B6/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://hangchuanin.github.io/2022/12/23/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F%E4%BB%8E%E9%9B%B6%E5%88%B0%E4%B8%80%E4%B9%8BWindows%E8%AE%BF%E9%97%AE%E6%8E%A7%E5%88%B6/&title=内网渗透从零到一之Windows访问控制"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://hangchuanin.github.io/2022/12/23/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F%E4%BB%8E%E9%9B%B6%E5%88%B0%E4%B8%80%E4%B9%8BWindows%E8%AE%BF%E9%97%AE%E6%8E%A7%E5%88%B6/&title=内网渗透从零到一之Windows访问控制"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://hangchuanin.github.io/2022/12/23/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F%E4%BB%8E%E9%9B%B6%E5%88%B0%E4%B8%80%E4%B9%8BWindows%E8%AE%BF%E9%97%AE%E6%8E%A7%E5%88%B6/&title=内网渗透从零到一之Windows访问控制"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://hangchuanin.github.io/2022/12/23/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F%E4%BB%8E%E9%9B%B6%E5%88%B0%E4%B8%80%E4%B9%8BWindows%E8%AE%BF%E9%97%AE%E6%8E%A7%E5%88%B6/&title=内网渗透从零到一之Windows访问控制"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://hangchuanin.github.io/2022/12/23/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F%E4%BB%8E%E9%9B%B6%E5%88%B0%E4%B8%80%E4%B9%8BWindows%E8%AE%BF%E9%97%AE%E6%8E%A7%E5%88%B6/&name=内网渗透从零到一之Windows访问控制&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://hangchuanin.github.io/2022/12/23/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F%E4%BB%8E%E9%9B%B6%E5%88%B0%E4%B8%80%E4%B9%8BWindows%E8%AE%BF%E9%97%AE%E6%8E%A7%E5%88%B6/&t=内网渗透从零到一之Windows访问控制"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2022
+    hangchuanin
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+ 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script> 
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script> 
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Umami Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>
